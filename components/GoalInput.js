@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, TextInput, Button, StyleSheet } from "react-native";
+import { View, TextInput, Button, StyleSheet, Modal, Image } from "react-native";
 
 const GoalInput = (props) => {
   //Change state of input
@@ -15,36 +15,59 @@ const GoalInput = (props) => {
   };
 
   return (
-    <View style={styles.inputContainer}>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Your course goal!"
-        onChangeText={goalInputHandler}
-        value={enteredGoalText}
-      />
-      <Button title="Add goal" onPress={addGoalHandler} />
-    </View>
+    // Modal is just like a layer used to display something
+    <Modal visible={props.visible} animationType="fade">
+      <View style={styles.inputContainer}>
+        <Image style={styles.image} source={require('../assets/images/goal.png')} />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Your course goal!"
+          placeholderTextColor="white"
+          onChangeText={goalInputHandler}
+          value={enteredGoalText}
+        />
+        <View style={styles.buttonContainer}>
+          <View style={styles.button}>
+            <Button title="Add goal" onPress={addGoalHandler}  />
+          </View>
+          <View style={styles.button}>
+            <Button title="Cancel" onPress={props.onCancel} color={"red"}/>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     marginBottom: 10,
     paddingBottom: 24,
-    borderBottomColor: "white",
-    borderBottomWidth: 1,
+    backgroundColor: '#2A2F4F'
+  },
+  image: {
+    width: "50%",
+    height: "50%",
+    resizeMode: "contain"
   },
   textInput: {
     borderWidth: 1,
     borderColor: "white",
     width: "80%",
-    marginRight: 8,
+    marginRight: 2,
     padding: 8,
+    color: "white"
   },
+  buttonContainer: {
+    flexDirection: "row"
+  },
+  button: {
+    margin: 8,
+    width: "30%"
+  }
 });
 
 export default GoalInput;

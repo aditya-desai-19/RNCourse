@@ -1,24 +1,32 @@
 import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  TextInput,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import { StyleSheet, View, FlatList, Button } from "react-native";
 import GoalItem from "./components/GoalItem";
 import GoalInput from "./components/GoalInput";
 
 export default function App() {
-  
-
   //Change state of list of goals
   const [courseGoals, setCourseGoals] = useState([]);
 
+  const [isModalModified, setIsModalModified] = useState(false);
+
+  const startAddGoalHandler = () => {
+    setIsModalModified(true);
+  };
+
+  const endAddGoalHandler = () => {
+    setIsModalModified(false);
+  };
+
   const addGoalHandler = (enteredGoalText) => {
-    setCourseGoals([...courseGoals, {text: enteredGoalText, id: Math.random().toString}]);
+    setCourseGoals([
+      ...courseGoals,
+      { text: enteredGoalText, id: Math.random().toString() },
+    ]);
+    endAddGoalHandler();
+  };
+
+  const deleteGoalHandler = (id) => {
+    setCourseGoals(courseGoals.filter((goal) => goal.id !== id));
   };
 
   return (
@@ -36,7 +44,8 @@ export default function App() {
     // </View>
 
     <View style={styles.appcontainer}>
-      <GoalInput  add={addGoalHandler} />
+      <Button title="Add new goal" color="blue" onPress={startAddGoalHandler} />
+      <GoalInput visible={isModalModified} add={addGoalHandler} onCancel={endAddGoalHandler} />
 
       {/* In react native styles do not cascade(ie: each item is treated as independent) */}
       <View style={styles.goalsContainer}>
@@ -54,7 +63,11 @@ export default function App() {
           data={courseGoals}
           renderItem={(itemData) => {
             return (
-              <GoalItem text={itemData.item.text}/>
+              <GoalItem
+                text={itemData.item.text}
+                id={itemData.item.id}
+                onDeleteItem={deleteGoalHandler}
+              />
             );
           }}
         />
