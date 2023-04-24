@@ -1,26 +1,25 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Button,
+  TextInput,
+  ScrollView,
+  FlatList,
+} from "react-native";
+import GoalItem from "./components/GoalItem";
+import GoalInput from "./components/GoalInput";
 
 export default function App() {
-  //Change state of input
-  const [enteredGoalText, setEnteredGoalText] = useState('');
+  
 
   //Change state of list of goals
   const [courseGoals, setCourseGoals] = useState([]);
 
-  const goalInputHandler = (enteredText) => {
-    setEnteredGoalText(enteredText);
-  }
-
-  // const addGoalHandler = () => {
-  //   setCourseGoals((currentCourseGoals) => {
-  //     [...currentCourseGoals, enteredGoalText];
-  //   });
-  // }
-
-  const addGoalHandler = () => {
-    setCourseGoals([...courseGoals, enteredGoalText])
-  }
+  const addGoalHandler = (enteredGoalText) => {
+    setCourseGoals([...courseGoals, {text: enteredGoalText, id: Math.random().toString}]);
+  };
 
   return (
     // View is similar to div in html
@@ -37,15 +36,28 @@ export default function App() {
     // </View>
 
     <View style={styles.appcontainer}>
-      <View style={styles.inputContainer}>
-        <TextInput style={styles.textInput} 
-          placeholder='Your course goal!'
-          onChangeText={goalInputHandler}
-        />
-        <Button title='Add goal' onPress={addGoalHandler}/>
-      </View>
+      <GoalInput  add={addGoalHandler} />
+
+      {/* In react native styles do not cascade(ie: each item is treated as independent) */}
       <View style={styles.goalsContainer}>
-        {courseGoals.map((goal) => <Text key={goal}>{goal}</Text>)}
+        {/* ScrollView is used to add scrolling functionality to the container */}
+        {/* <ScrollView>
+          {courseGoals.map((goal) => (
+            <View key={goal} style={styles.goalArea}>
+              <Text style={styles.goalItem}>{goal}</Text>
+            </View>
+          ))}
+        </ScrollView> */}
+
+        {/* Flatlist is used instead of ScrollView when dealing with large list */}
+        <FlatList
+          data={courseGoals}
+          renderItem={(itemData) => {
+            return (
+              <GoalItem text={itemData.item.text}/>
+            );
+          }}
+        />
       </View>
     </View>
   );
@@ -59,34 +71,17 @@ const styles = StyleSheet.create({
   //   justifyContent: 'center',
   // },
   // txtstyle: {
-  //   margin: 20, 
-  //   borderWidth: 2, 
-  //   borderColor: 'white', 
+  //   margin: 20,
+  //   borderWidth: 2,
+  //   borderColor: 'white',
   //   padding: 20
   // },
   appcontainer: {
     flex: 1,
-    padding:20,
-    margin: 20
-  },
-  inputContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-    paddingBottom: 24,
-    borderBottomColor: 'white',
-    borderBottomWidth: 1,
-  },
-  textInput: {
-    borderWidth:1,
-    borderColor: 'white',
-    width: '80%',
-    marginRight: 8,
-    padding: 8
+    padding: 20,
+    margin: 20,
   },
   goalsContainer: {
-    flex: 5
-  }
+    flex: 5,
+  },
 });
